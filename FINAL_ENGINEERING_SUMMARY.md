@@ -1,7 +1,5 @@
 # Orbit : Final Engineering Summary
 
-## Executive summary
-
 Orbit is a local, governed software-engineering platform built around a working URL-shortening service. It combines product functionality with an agentic SDLC control plane that converts a natural-language requirement into a reviewable, validated engineering bundle.
 
 The design keeps model output subordinate to deterministic application code. Models propose structured artifacts. The database owns workflow state, dependency edges, approvals, revisions, leases, and audit history. Typed contracts and allowlisted tools decide whether generated output can move to the next stage. Human reviewers approve the design and final release checkpoints.
