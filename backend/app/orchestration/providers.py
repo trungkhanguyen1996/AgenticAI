@@ -1,3 +1,4 @@
+import ast
 import json
 from abc import ABC, abstractmethod
 from typing import Any
@@ -70,6 +71,14 @@ def validate_stage_output(node: str, output: object) -> dict[str, Any]:
         not isinstance(value, str) or not value.strip()
     ):
         raise ProviderError(f"{node}.{required} must be non-empty text", False)
+    if contract_node == "tests":
+        try:
+            ast.parse(value, filename="test_generated.py")
+        except SyntaxError as exc:
+            raise ProviderError(
+                f"{node}.test_code is not valid Python: {exc.msg} at line {exc.lineno}",
+                False,
+            ) from None
     if contract_node == "decompose":
         expected = {"name", "objective", "depends_on", "completion_gate"}
         if any(not isinstance(item, dict) or not expected.issubset(item) for item in value):
@@ -83,6 +92,16 @@ def validate_stage_output(node: str, output: object) -> dict[str, Any]:
                 raise ProviderError("Every generated file needs path, language, and purpose", False)
             if not item.get("source_code") and not item.get("unified_diff"):
                 raise ProviderError("Every generated file needs source_code or unified_diff", False)
+            source_code = item.get("source_code")
+            if isinstance(source_code, str) and str(item.get("path", "")).endswith(".py"):
+                try:
+                    ast.parse(source_code, filename=str(item["path"]))
+                except SyntaxError as exc:
+                    raise ProviderError(
+                        f"{node}.{item['path']} is not valid Python: {exc.msg} "
+                        f"at line {exc.lineno}",
+                        False,
+                    ) from None
     return output
 
 

@@ -513,8 +513,29 @@ class WorkflowEngine:
             raise PolicyViolationError("Potential secret in generated artifact")
         for key in ("sandbox_validation", "executed_checks", "validation"):
             if isinstance(output.get(key), dict) and output[key].get("passed") is False:
-                # Preserve bounded tool evidence on failure through the failure detail.
-                raise PolicyViolationError(f"{key} failed: {json.dumps(output[key])[:400]}")
+                evidence = output[key]
+                failed_check = next(
+                    (
+                        check
+                        for check in evidence.get("checks", [])
+                        if isinstance(check, dict) and check.get("passed") is False
+                    ),
+                    None,
+                )
+                if failed_check:
+                    command = " ".join(str(part) for part in failed_check.get("command", []))
+                    detail = (
+                        failed_check.get("error")
+                        or failed_check.get("output")
+                        or "check failed"
+                    )
+                    detail = " ".join(str(detail).split())
+                    if len(detail) > 240:
+                        detail = f"{detail[:237]}..."
+                    summary = f"{command}: {detail}" if command else detail
+                else:
+                    summary = evidence.get("error") or "validation check failed"
+                raise PolicyViolationError(f"{key} failed: {summary}")
         if node == "release" and output.get("ready") is not True:
             raise PolicyViolationError("Release requires passing evidence for this exact candidate")
         return {

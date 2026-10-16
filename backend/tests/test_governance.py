@@ -43,11 +43,41 @@ class ProviderUnavailable(AIProvider):
         raise ProviderError("offline")
 
 
+class MalformedProvider(AIProvider):
+    name = "malformed"
+
+    async def execute(self, node, requirement, context):
+        if node == "tests":
+            return validate_stage_output(
+                node, {"test_code": "def test_broken():\n    value = f'{missing\n"}
+            )
+        return await DeterministicProvider().execute(node, requirement, context)
+
+
 async def test_provider_falls_back_without_paid_api():
     provider = FallbackProvider(ProviderUnavailable(), DeterministicProvider())
     output = await provider.execute("intake", "Build a secure shortener", {})
     assert output["fallback"]["used"] is True
     assert output["fallback"]["to"] == "deterministic"
+
+
+async def test_provider_falls_back_when_generated_tests_are_invalid_python():
+    provider = FallbackProvider(MalformedProvider(), DeterministicProvider())
+    output = await provider.execute(
+        "tests",
+        "Build a URL shortener with analytics",
+        {"normalized_requirement": normalize("Build a URL shortener with analytics")},
+    )
+    assert output["provider_used"] == "deterministic"
+    assert output["fallback"]["used"] is True
+    assert "test_generated_redirect" in output["test_code"]
+
+
+def test_stage_validation_rejects_invalid_python_before_sandbox():
+    with pytest.raises(ProviderError, match="not valid Python"):
+        validate_stage_output(
+            "tests", {"test_code": "def test_broken():\n    value = f'{missing\n"}
+        )
 
 
 async def test_stage_descriptions_are_specific():

@@ -289,7 +289,7 @@ export default function Dashboard() {
           {tab !== "activity" && (
             <div className="header-actions">
               <button className="access-button" onClick={setAccess}>
-                {principal ? `${principal.actor} · ${principal.role}` : "Set access token"}
+                {principal ? `${principal.actor} · ${principal.role}` : "Set access token (Look into README file for token)"}
               </button>
               {principal?.role === "requester" && <button
                 className="primary"

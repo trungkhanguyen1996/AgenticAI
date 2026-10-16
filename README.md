@@ -258,11 +258,3 @@ To demonstrate the assessment:
 The workflow detail screen is organized around current state: artifact review, approval actions,
 dependency topology, recovery checkpoints, and stage outputs. Operational events remain available
 through the Activity view and API endpoints without crowding the primary review surface.
-
-## Operational expectations
-
-For a local demonstration, Docker Compose provides PostgreSQL, Redis, the API, worker, local
-Ollama, sandbox image, and Next.js UI. For a production deployment, add enterprise identity,
-TLS, managed secret storage, backups, queue durability, Docker isolation controls, deployment
-approvals, and centralized log/metric retention. Those controls are deliberately documented as
-deployment responsibilities rather than simulated by the local prototype.
