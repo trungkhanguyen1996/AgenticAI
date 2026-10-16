@@ -367,8 +367,6 @@ RUN_DOCKER_TESTS=1 .venv/bin/pytest -q backend/tests/test_sandbox.py
 
 ## Engineering principles and patterns
 
-### Principles followed
-
 - Single responsibility at the module level: API, service, orchestration, provider, sandbox, and
   persistence concerns have identifiable homes.
 - Explicit boundaries: model output, candidate files, database state, and approval transitions are
