@@ -4,6 +4,10 @@ Orbit is a URL-shortening application with a governed agentic software-engineeri
 It combines a working URL service with an orchestration system that turns requirements into
 reviewable engineering artifacts.
 
+## Documentation
+
+- [Final engineering summary](FINAL_ENGINEERING_SUMMARY.md)
+
 ## What the project does
 
 ### URL shortener
@@ -187,10 +191,6 @@ frontend/app/                Next.js dashboard
 FINAL_ENGINEERING_SUMMARY.md Detailed architecture, controls, recovery, patterns, and validation
 compose.yaml                 Local application topology
 ```
-
-## Documentation
-
-- [Final engineering summary](FINAL_ENGINEERING_SUMMARY.md)
 
 ## Product and engineering model
 
